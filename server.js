@@ -8,6 +8,16 @@ const PATH = require('path')
 const APP = EXPRESS();
 APP.use(BODYPARSER.json());
 
+// Express Sendfile Option
+const OPTIONS = {
+    root: __dirname + '/public/assets/',
+    dotfiles: 'deny',
+    headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true
+    }
+};
+
 // Cross-Origin Handlers
 APP.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -23,12 +33,10 @@ APP.use(EXPRESS.static(PATH.join(__dirname, 'public')));
 APP.listen(PORT);
 
 
-// Load html file
+// Send html file
 APP.get('/api/file', (req, res) => {
-    FS.readFile('./test.html', 'utf8', (err, data) => {
+    res.status(200).sendFile('test.html', OPTIONS, (err) => {
         if (err) throw err;
-        
-        res.status(200).json(data);
     });
 });
 
